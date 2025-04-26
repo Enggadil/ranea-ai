@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { FiMic, FiSearch } from 'react-icons/fi';
-import { Spinner } from '@/components/Spinner';
 import axios from 'axios';
 
 export default function AppPage() {
