@@ -31,13 +31,13 @@ export default function AppPage() {
   const handleSearch = async (input) => {
     if (!input.trim()) return;
     setLoading(true);
-    setResponse('');
+    setResponse('Thinking...');
 
     try {
       const res = await axios.post('/api/ask', { query: input });
       setResponse(res.data.reply);
     } catch (err) {
-      console.error('Error fetching response:', err);
+      console.error('Frontend error:', err);
       setResponse('❌ Something went wrong. Please try again.');
     }
 
@@ -59,7 +59,7 @@ export default function AppPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(query)}
-            placeholder="e.g. Find Urdu-speaking dentist in Brooklyn"
+            placeholder="e.g. Book an Urdu-speaking female dentist near Brooklyn"
             className="flex-1 bg-transparent text-white placeholder-gray-400 focus:outline-none text-base"
           />
           <button onClick={() => handleSearch(query)} className="hover:text-blue-400">
@@ -70,13 +70,8 @@ export default function AppPage() {
           </button>
         </div>
 
-        {loading && (
-          <p className="mt-8 text-sm text-blue-400 animate-pulse">
-            Thinking...
-          </p>
-        )}
-
-        {!loading && response && (
+        {loading && <p className="mt-8 text-sm text-blue-400 animate-pulse">Thinking...</p>}
+        {response && !loading && (
           <div className="mt-8 bg-white/10 p-6 rounded-xl shadow-inner text-left">
             <h2 className="text-lg font-semibold mb-2 text-green-400">Ranea's Response:</h2>
             <p className="whitespace-pre-wrap text-gray-300 leading-relaxed">{response}</p>
