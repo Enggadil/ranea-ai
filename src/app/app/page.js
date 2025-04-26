@@ -19,7 +19,7 @@ export default function AppPage() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
-    recognition.onresult = function (event) {
+    recognition.onresult = (event) => {
       const speech = event.results[0][0].transcript;
       setQuery(speech);
       handleSearch(speech);
@@ -28,36 +28,39 @@ export default function AppPage() {
     recognition.start();
   };
 
-  const handleSearch = async (input) => {
-    if (!input.trim()) return;
+  const handleSearch = async (inputQuery) => {
+    if (!inputQuery.trim()) return;
     setLoading(true);
     setResponse('');
 
     try {
-      const res = await axios.post('/api/ask', { query: input });
+      const res = await axios.post('/api/ask', { query: inputQuery });
       setResponse(res.data.reply);
     } catch (err) {
-      console.error('Frontend error:', err);
-      setResponse('❌ Something went wrong. Please try again.');
+      console.error('Frontend Error:', err);
+      setResponse('❌ Sorry, something went wrong. Please try again.');
     }
 
     setLoading(false);
   };
 
   return (
-    <main className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-black via-gray-900 to-black text-white px-6 py-12">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-black via-gray-900 to-black text-white p-6">
       <div className="max-w-3xl w-full text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-green-400">
-          Ask Ranea Anything
+          Your Personal AI Healthcare Assistant
         </h1>
+        <p className="text-gray-400 mb-10 text-lg">
+          Ask Ranea to find doctors, clinics, languages, specialties — or book appointments without an app.
+        </p>
 
-        <div className="flex items-center gap-4 bg-white/10 p-4 rounded-xl backdrop-blur-sm shadow-md">
+        <div className="flex items-center gap-4 bg-white/10 p-4 rounded-xl backdrop-blur-md shadow-md">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(query)}
-            placeholder="e.g. Book an Urdu-speaking doctor near Brooklyn"
-            className="flex-1 bg-transparent text-white placeholder-gray-400 focus:outline-none text-base"
+            placeholder="e.g., Find Urdu-speaking dentist in Brooklyn"
+            className="flex-1 bg-transparent outline-none text-white placeholder-gray-400 text-base"
           />
           <button onClick={() => handleSearch(query)} className="hover:text-blue-400">
             <FiSearch size={22} />
@@ -68,15 +71,15 @@ export default function AppPage() {
         </div>
 
         {loading && (
-          <div className="flex justify-center mt-10">
-            <Spinner />
+          <div className="mt-8 text-blue-400 animate-pulse">
+            Thinking...
           </div>
         )}
 
-        {!loading && response && (
-          <div className="mt-10 bg-white/10 p-6 rounded-xl text-left">
-            <h2 className="text-lg font-semibold text-green-400 mb-2">Ranea's Response:</h2>
-            <p className="whitespace-pre-wrap text-gray-300">{response}</p>
+        {response && !loading && (
+          <div className="mt-8 bg-white/10 p-6 rounded-xl shadow-inner text-left">
+            <h2 className="text-green-400 font-semibold mb-2">Ranea's Response:</h2>
+            <p className="text-gray-300 whitespace-pre-wrap">{response}</p>
           </div>
         )}
       </div>
